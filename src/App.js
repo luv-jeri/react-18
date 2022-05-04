@@ -5,7 +5,12 @@ import data from './data.json';
 
 import Comment from './components/CommentCard/index.js';
 function App() {
-  const [filtered, setFiltered] = useState([...data]);
+  const totalEl = data.length;
+  const pages = Math.ceil(totalEl / 5);
+
+  const el = data.slice(0, 5);
+
+  const [filtered, setFiltered] = useState([...el]);
   const [search, setSearch] = useState('');
 
   const [isPending, startTransaction] = useTransition();
@@ -14,16 +19,18 @@ function App() {
     setSearch(e.target.value);
 
     startTransaction(() => {
-      setFiltered(
-        data.filter((item) =>
-          item.name.toLowerCase().includes(e.target.value.toLowerCase())
-        )
+      const data_ = data.filter((item) =>
+        item.name.toLowerCase().includes(e.target.value.toLowerCase())
       );
+      setFiltered(data_);
     });
   };
 
   return (
     <div className='App'>
+      <h1>
+        page : {pages} {totalEl}
+      </h1>
       <input
         className='search-input'
         type='text'
@@ -41,6 +48,15 @@ function App() {
         ) : (
           <div className='no-results'>No results found</div>
         )}
+        <div
+          style={{
+            display: 'flex',
+          }}
+        >
+          {Array.from(Array(pages).keys()).map((el) => {
+            return <div className='page-number'>{el}</div>;
+          })}
+        </div>
       </div>
     </div>
   );
